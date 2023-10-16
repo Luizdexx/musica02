@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <title>Qual é a música?</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="shortcut icon" href="imgs/wanna-rock-icon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+</head>
+<body>
+  <nav>
+    <div class="navbar">
+      <a class="logo" href="#">Wanna Rock</a>
+      <ul class="nav-links">
+        <li>
+          <a href="#" id="dark-mode-toggle">
+              <span class="fas fa-moon"></span>
+          </a>
+      </li>
+        <li><a href="pagina-off.html"><i class="fas fa-home"></i></a></li>
+        <li><a href="#">60</a></li>
+        <li><a href="Anos70.html">70</a></li>
+        <li><a href="Anos80.html">80</a></li>
+          <li><a href="Anos90.html">90</a></li>
+          <li><a href="#">2000</a></li>
+      </ul>
+  </div>
+  </nav>
+    <button id="start-game" onclick="startGame()">Iniciar jogo</button>
+    <div id="game-container"></div>
+    <div class="dark-mode-container hidden">
+    <button id="play-music" class="hidden">Play</button>
+    <label id="lbl-resposta" for="resposta" class="hidden">Qual é a música?</label>
+    <input type="text" id="resposta" class="hidden"></input>
+    <button id="btn-resposta" class="hidden">Enviar</button>
+    </div>
+</body>
+<script src="https://sdk.scdn.co/spotify-player.js"></script>
+<script src="script.js"></script>
+<style>
+    *{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+nav{
+  background-color: #212425;
+  color: #fff;
+  padding: 10px 0;
+}
+.navbar{
+  display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0 auto;
+    width: 90%;
+    max-width: 1200px;
+}
+.logo {
+    font-size: 24px;
+    text-decoration: none;
+    color: #fff;
+    font-weight: bold;
+}
+.nav-links {
+    list-style: none;
+    display: flex;
+    margin: 0;
+    padding: 0;
+}
+
+.nav-links li {
+    margin: 0 15px;
+}
+.nav-links a {
+    text-decoration: none;
+    color: #fff;
+    font-weight: bold;
+    transition: color 0.3s;
+}
+
+.nav-links a:hover {
+    color: #71a0e3; /* Cor de destaque ao passar o mouse */
+}
+body {
+    font-family: sans-serif;
+    padding: 300px;
+    text-align: center;
+    background-color: #f0f0f0;
+  }
+  
+  h1 {
+    text-align: center;
+  }
+  
+  audio {
+    width: 100%;
+  }
+  
+  input {
+    width: 50%;
+    margin: 10px 159px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  button {
+    display: block;
+    width: 200px;
+    margin: 10px auto;
+    padding: 10px;
+    background-color: #212425;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  button:hover{
+    background-color: #313a55;
+  }
+  .hidden{
+    display: none;
+  }
+  .dark-mode {
+    background-color: #2b2b2b; /* Cor de fundo escura desejada */
+    color: #fff; /* Cor do texto em modo escuro */
+}
+
+.dark-mode-container {
+    background-color: #716d6d; /* Cor de fundo escura desejada */
+    padding: 20px; /* Espaçamento ao redor dos elementos */
+    border-radius: 10px; /* Borda arredondada (opcional) */
+    color: #ffffff; /* Cor do texto em modo escuro (opcional) */
+}
+
+</style>
+
+
+
+
+<script>
+    // Função para iniciar o jogo
+function startGame() {
+  //substitui o botão Iniciar jogo por uma contagem regressiva e dps cria um botao para chamar a promisse player
+  const gameContainer = document.getElementById("game-container");
+  const startButton = document.getElementById("start-game");
+  const playerButton = document.getElementById("play-music");
+  const lblResposta = document.getElementById("lbl-resposta");
+  const resposta = document.getElementById("resposta");
+  const btnResposta = document.getElementById("btn-resposta");
+  startButton.remove();
+  const countdown = document.createElement("h1");
+  countdown.innerText = "3";
+  gameContainer.appendChild(countdown);
+  setTimeout(() => {
+    countdown.innerText = "2";
+    setTimeout(() => {
+      countdown.innerText = "1";
+      setTimeout(() => {
+        countdown.remove();
+        playerButton.classList.remove("hidden");
+        resposta.classList.remove("hidden");
+        lblResposta.classList.remove("hidden");
+        btnResposta.classList.remove("hidden");     
+
+      }, 1000);
+    }, 1000);
+  }, 1000);
+}
+let player;
+let trackName;
+
+window.onSpotifyWebPlaybackSDKReady = () => {
+  //Trocar o token abaixo a cada hora, precisa estar logado, através do link https://developer.spotify.com/documentation/web-playback-sdk/tutorials/getting-started 
+  const token = "BQAZC1o6v7SZ-jRZrh3m2YhQWIejGOc58Z_41EeioTyVd3wpvn5lcK56rPRRrsOB6-LI5b30nXT5y4hsQ5FvShe8UHN1ZYEsoj4nFO5K3axOtJkR8o-MN31KQ4eLYyERY-v3R7lYvGcRhhdSPQeuAEnBX1SSrQI1FKUC1W8PJoAWtIqGVwUoxU2WYL17Kax_IabRooefcnQe4PaKu8GsHqUPem8K"
+    player = new Spotify.Player({
+    name: "Web Playback SDK Quick Start Player",
+    getOAuthToken: (cb) => {
+      cb(token);
+    },
+    volume: 0.5,
+  });
+  player.addListener('ready', ({ device_id }) => {
+    console.log('Ready with Device ID', device_id);
+    const connect_to_device = () => {
+      let album_uri = "spotify:album/1GbtB4zTqAsyfZEsm1RZfx"
+      fetch(`https://api.spotify.com/v1/me/player/play?device_id=${device_id}`, {
+        method: "PUT",
+        body: JSON.stringify({
+          context_uri: album_uri,
+          play: false,
+        }),
+        headers: new Headers({
+            "Authorization": "Bearer " + token,
+        }),
+    }).then(response => console.log(response))
+    .then(data => {
+      // Adicionar listener para o evento de mudança de estado de reprodução
+      player.addListener('player_state_changed', ({
+        track_window
+      }) => {
+        trackName = track_window.current_track.name;
+        trackName = trackName.toLowerCase();
+        console.log('Current Track:', trackName);
+      });})}
+    connect_to_device();
+  });
+
+//botão play music para tocar a musica por 13 segundos
+document.getElementById("play-music").addEventListener('click',() => {
+    player.togglePlay();
+    setTimeout(() => {
+      player.pause();
+    }, 13000);
+  });
+  
+//botão resposta para verificar se a resposta está correta apagar a resposta e mudar a musica do play-music para a proxima
+ document.getElementById("btn-resposta").addEventListener('click',(event) => {
+  event.preventDefault();
+  let resposta = document.getElementById("resposta").value;
+  resposta = resposta.toLowerCase();
+  if (resposta == trackName) {
+    alert("Você Acertou, Parabéns!");
+    document.getElementById("resposta").value = "";
+        player.nextTrack();
+        setTimeout(() => {
+        player.pause();
+        }, 1300);
+      } else {
+        alert("Você errou, tente novamente!");
+      }
+    });
+  player.connect();  
+};
+
+document.addEventListener("DOMContentLoaded", function () {
+        const darkModeToggle = document.getElementById("dark-mode-toggle");
+        const albumsHeader = document.querySelector(".spotify-playlists h2");
+    
+        darkModeToggle.addEventListener("click", function () {
+            if (document.body.classList.contains("dark-mode")) {
+                document.body.classList.remove("dark-mode");
+                albumsHeader.classList.remove("black-text");
+            } else {
+                document.body.classList.add("dark-mode");
+                albumsHeader.classList.add("black-text");
+            }
+        });
+    });
+
+// Função para iniciar o jogo
+function startGame() {
+ 
+ // Seleciona a classe "dark-mode-container" e remove a classe "hidden"
+  const darkModeContainer = document.querySelector(".dark-mode-container");
+  darkModeContainer.classList.remove("hidden");
+
+  // Remova a classe "hidden" de todos os elementos dentro da "dark-mode-container"
+  const playerButton = darkModeContainer.querySelector("#play-music");
+  const lblResposta = darkModeContainer.querySelector("#lbl-resposta");
+  const resposta = darkModeContainer.querySelector("#resposta");
+  const btnResposta = darkModeContainer.querySelector("#btn-resposta");
+
+  playerButton.classList.remove("hidden");
+  lblResposta.classList.remove("hidden");
+  resposta.classList.remove("hidden");
+  btnResposta.classList.remove("hidden");
+}
+
+
+</script>
+</html>
